@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getToken } from './auth';
 
 const ApiChat = axios.create({
-    baseURL: 'http://192.168.101.28:9015',
+    baseURL: 'http://10.0.2.2:9015',
     timeout: 50000
 });
 
