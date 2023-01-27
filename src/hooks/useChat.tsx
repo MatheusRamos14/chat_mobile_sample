@@ -5,12 +5,12 @@ import React, {
     useEffect
 } from "react";
 import { AxiosError } from "axios";
+import { io, Socket } from "socket.io-client";
 
+import { useAuth } from "./useAuth";
 import { ChatDTO } from '../dtos/Chats';
 import { MessagesDTO } from '../dtos/Messages';
 import { ApiChat } from '../services/api';
-import { getItem, storeItem } from '../services/storage';
-
 interface IProviderProps {
     children: JSX.Element
 }
@@ -29,8 +29,10 @@ interface IMessages {
 const ChatContext = createContext({} as IContextData);
 
 const ChatProvider: React.FC<IProviderProps> = ({ children }) => {
+    const { user } = useAuth();
     const [chats, setChats] = useState<ChatDTO>([]);
     const [messages, setMessages] = useState<IMessages[]>([]);
+    const [socket, setSocket] = useState<Socket>({} as Socket);
 
     async function fetchChats() {
         try {
@@ -42,6 +44,10 @@ const ChatProvider: React.FC<IProviderProps> = ({ children }) => {
             const err = error as AxiosError;
             console.log(err.message);
         }
+    }
+
+    async function fetchConnections() {
+        
     }
 
     // async function fetchMessages(chat_id: string) {
@@ -75,17 +81,22 @@ const ChatProvider: React.FC<IProviderProps> = ({ children }) => {
     // }
 
     useEffect(() => {
-        const refreshInterval = setInterval(async () => {
-            await fetchChats();
+        const connection = io("http://10.0.2.2:9015/");
 
-            // for (let chat of chats) {
-            //     fetchMessages(chat.id)
-            // }
-        }, 700);
+        setSocket(connection);
 
-        return () => {
-            clearInterval(refreshInterval);
-        }
+        connection.emit("new_connection", { user_id: user.user.id });
+        // const refreshInterval = setInterval(async () => {
+        //     await fetchChats();
+
+        //     // for (let chat of chats) {
+        //     //     fetchMessages(chat.id)
+        //     // }
+        // }, 700);
+
+        // return () => {
+        //     clearInterval(refreshInterval);
+        // }
     }, [])
 
     return (

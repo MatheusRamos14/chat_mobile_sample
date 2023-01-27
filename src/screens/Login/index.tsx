@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Entypo from 'react-native-vector-icons/Entypo';
 import { AxiosError } from "axios";
+import { io } from 'socket.io-client';
 
 import { useAuth } from "../../hooks/useAuth";
 import { Input } from "../../components/Input";
@@ -24,7 +25,7 @@ export function Login() {
 
     const handleLogin = async () => {
         try {
-            await login({ email, password });
+            await login({ email: "mramos@mail.com", password: "mramos123" });
         } catch (error) {
             const err = error as AxiosError;
             console.log(err.response?.status)
