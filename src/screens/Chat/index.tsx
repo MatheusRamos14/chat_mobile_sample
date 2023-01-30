@@ -7,11 +7,12 @@ import { styled } from "nativewind";
 import { AxiosError } from "axios";
 
 import { ChatScreenParams } from "../../routes/index.routes";
-import { MessagesDTO } from "../../dtos/Messages";
+import { MessagesDTO, Messages } from "../../dtos/Messages";
 import { useAuth } from "../../hooks/useAuth";
 import { ApiChat } from "../../services/api";
 import { formatChatDate, ISection } from "../../utils/formatChatDate";
 import { Header } from "../../components/Header";
+import { useChat } from "../../hooks/useChat";
 
 const BorderlessButtonTW = styled(BorderlessButton);
 
@@ -21,26 +22,17 @@ export function Chat() {
 	const { chat_id, friend_id, friend_name } = params as ChatScreenParams;
 
 	const { user } = useAuth();
+	const { sendMessage, socket } = useChat();
 
 	const [messages, setMessages] = useState<ISection[]>([]);
-	const [newMessage, setNewMessage] = useState<string>();	
+	const [newMessage, setNewMessage] = useState<string>();
 
 	async function handleSendMessage() {
-		if (newMessage === '') return;
+		if (newMessage === '' || !newMessage) return;
+
+		sendMessage({ chat_id, content: newMessage }, user.user.id);
+
 		setNewMessage('');
-
-		try {
-			const { data } = await ApiChat.post('/messages/send', {
-				chat_id,
-				content: newMessage
-			})
-
-			console.log(data);
-			fetchMessages();
-		} catch (error) {
-			const err = error as AxiosError;
-			console.log(err.message)
-		}
 	}
 
 	async function fetchMessages() {
@@ -56,13 +48,63 @@ export function Chat() {
 		}
 	}
 
-	useFocusEffect(useCallback(() => {
-		fetchMessages();
-		// const refreshInterval = setInterval(fetchMessages, 5000);
+	async function readAllMessages() {
+		const unreadExists = messages.find(section => {
+			const hasUnread = section.data.find(message => message.alreadyRead === false)
+			if (hasUnread) return section
+			else return null
+		})
+		if (!unreadExists) return;
 
-		// return () => {
-		//     clearInterval(refreshInterval);
-		// }
+		try {
+			await ApiChat.patch(`/chats/readAllmessages/${chat_id}`);
+
+			socket.emit("refresh")
+		} catch (error) {
+			const err = error as AxiosError;
+			console.log(err.message);
+		}
+	}
+
+	// useFocusEffect(useCallback(() => {
+	// 	readAllMessages();
+	// }, [messages]))
+
+	useFocusEffect(useCallback(() => {
+		fetchMessages();				
+
+		socket.on("message_received", _ => {
+			console.log("Recebeu mensagem em tela", user.user.name)
+			socket.emit("chat_message", { chat_id })
+		});
+
+		socket.on("chat_message_response", (data: MessagesDTO) => {
+			console.log("Recebeu o chat inteiro", user.user.name)
+
+			const format = formatChatDate(data);
+			setMessages(format);
+		});
+
+		// socket.on("message_received", (data: Messages) => {
+		// 	console.log(user.user.id, "message received, overall:", data);
+
+		// 	const formatted = formatChatDate([data]);
+
+		// 	const allMessages = messages.map(section => {										
+		// 		if (section.title === formatted[0].title) {
+		// 			console.log("achei igual", section.title, formatted[0].title)
+		// 			section.data.push(...formatted[0].data)
+		// 		}
+
+		// 		return section;
+		// 	})
+
+		// 	setMessages(allMessages);
+		// })
+
+		return () => {
+		    socket.emit("chat_action", { chat_id, action: "leave" })
+		}
 	}, []))
 
 	return (

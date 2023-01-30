@@ -9,13 +9,12 @@ import {
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { styled } from 'nativewind';
 import Feather from 'react-native-vector-icons/Feather';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { useAuth } from '../../hooks/useAuth';
 import { useChat } from '../../hooks/useChat';
 import { Header } from '../../components/Header';
 import { ChatScreenParams } from '../../routes/index.routes';
-import { ApiChat } from '../../services/api';
 import { ChatCard } from '../../components/ChatCard';
 
 const BorderlessButtonTW = styled(BorderlessButton);
@@ -23,9 +22,10 @@ const BorderlessButtonTW = styled(BorderlessButton);
 export function ChatsList() {
     const { navigate } = useNavigation();
     const { user } = useAuth();
-    const { chats } = useChat();
+    const { chats, socket } = useChat();
 
     function handleNavigate(ChatParams: ChatScreenParams) {
+        socket.emit("chat_action", { chat_id: ChatParams.chat_id, action: 'enter' })
         navigate('Chat', ChatParams)
     }
 

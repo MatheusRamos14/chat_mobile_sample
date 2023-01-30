@@ -25,7 +25,7 @@ export function Login() {
 
     const handleLogin = async () => {
         try {
-            await login({ email: "mramos@mail.com", password: "mramos123" });
+            await login({ email, password });
         } catch (error) {
             const err = error as AxiosError;
             console.log(err.response?.status)

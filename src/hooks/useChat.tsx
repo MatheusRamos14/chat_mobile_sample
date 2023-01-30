@@ -11,15 +11,19 @@ import { useAuth } from "./useAuth";
 import { ChatDTO } from '../dtos/Chats';
 import { MessagesDTO } from '../dtos/Messages';
 import { ApiChat } from '../services/api';
+
+type MessageInfo = { chat_id: string, content: string };
+
 interface IProviderProps {
     children: JSX.Element
 }
-
 
 interface IContextData {
     chats: ChatDTO;
     messages: IMessages[];
     fetchChats: () => void;
+    socket: Socket;
+    sendMessage: (messageInfo: MessageInfo, user_id: string) => Promise<void>;
 }
 
 interface IMessages {
@@ -46,8 +50,8 @@ const ChatProvider: React.FC<IProviderProps> = ({ children }) => {
         }
     }
 
-    async function fetchConnections() {
-        
+    async function sendMessage(message: MessageInfo, user_id: string) {
+        socket.emit("new_message", { user_id, message });
     }
 
     // async function fetchMessages(chat_id: string) {
@@ -81,26 +85,25 @@ const ChatProvider: React.FC<IProviderProps> = ({ children }) => {
     // }
 
     useEffect(() => {
-        const connection = io("http://10.0.2.2:9015/");
+        const connection = io("https://4888-2804-d4b-8914-7e00-512a-2678-e92e-616e.sa.ngrok.io");
+        console.log(connection);
 
         setSocket(connection);
 
         connection.emit("new_connection", { user_id: user.user.id });
-        // const refreshInterval = setInterval(async () => {
-        //     await fetchChats();
 
-        //     // for (let chat of chats) {
-        //     //     fetchMessages(chat.id)
-        //     // }
-        // }, 700);
-
-        // return () => {
-        //     clearInterval(refreshInterval);
-        // }
+        connection.on("refresh_response", data => {
+            console.log("Carregou todos chats para o", user.user.name)
+            setChats(data)
+        });
+        connection.on("message_received", data => {
+            console.log("Recebeu mensagem", user.user.name)
+            connection.emit("refresh")
+        });
     }, [])
 
     return (
-        <ChatContext.Provider value={{ chats, messages, fetchChats }}>
+        <ChatContext.Provider value={{ chats, messages, fetchChats, socket, sendMessage }}>
             {children}
         </ChatContext.Provider>
     )

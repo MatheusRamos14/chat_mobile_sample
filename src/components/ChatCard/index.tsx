@@ -34,10 +34,13 @@ export function ChatCard({ data, userId, handleNavigate }: IChatProps) {
                     <Text className="text-base font-normal text-[#333333] mb-1">
                         {data.connection.users[0].name}
                     </Text>
-                    <Text className="text-sm font-normal text-[#666666]">
-                        {data.messages[0].author_id === userId && 'You:'}
-                        {data.messages[0].content}
-                    </Text>
+                    {
+                        data.messages.length > 0 &&
+                        <Text className="text-sm font-normal text-[#666666]">
+                            {data.messages[0].author_id === userId && 'You:'}
+                            {data.messages[0].content}
+                        </Text>
+                    }
                 </View>
                 {data.unread !== 0 &&
                     <View className="w-5 h-5 rounded-full items-center justify-center">
