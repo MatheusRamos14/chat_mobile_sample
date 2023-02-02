@@ -3,11 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Login } from '../screens/Login';
 
-type AuthStackParamList = {
-    Login: undefined
-};
-
-const { Navigator, Screen } = createStackNavigator<AuthStackParamList>();
+const { Navigator, Screen } = createStackNavigator<ReactNavigation.AuthStackParamList>();
 
 export function AuthRoutes() {
     return (

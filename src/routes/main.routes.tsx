@@ -6,14 +6,7 @@ import { Calls } from '../screens/Calls';
 import { Contacts } from '../screens/Contacts';
 import { More } from '../screens/More';
 
-type AuthStackParamList = {
-    Chats: undefined;
-    Calls: undefined;
-    Contacts: undefined;
-    More: undefined;
-};
-
-const { Navigator, Screen } = createBottomTabNavigator<AuthStackParamList>();
+const { Navigator, Screen } = createBottomTabNavigator<ReactNavigation.MainBarParamList>();
 
 export function MainRoutes() {
     return (
