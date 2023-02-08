@@ -1,32 +1,32 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
     View,
-    Text,
-    Image,
     TextInput,
     FlatList
 } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { styled } from 'nativewind';
 import Feather from 'react-native-vector-icons/Feather';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
-import { useAuth } from '../../hooks/useAuth';
-import { useChat } from '../../hooks/useChat';
-import { Header } from '../../components/Header';
-import { ChatScreenParams } from '../../routes/index.routes';
-import { ChatCard } from '../../components/ChatCard';
+import { useAuth } from '../hooks/useAuth';
+import { useChat } from '../hooks/useChat';
+import { Header } from '../components/Header';
+import { ChatCard } from '../components/ChatCard';
 
 const BorderlessButtonTW = styled(BorderlessButton);
 
-export function ChatsList() {
-    const { navigate } = useNavigation();
+type TChatScreenParams = ReactNavigation.AppStackScreenProps<"Chat">;
+type Props = ReactNavigation.CompositeProps<"Chats">;
+
+export function ChatsList({ navigation }: Props) {
+    const { route } = useNavigation<TChatScreenParams>();
     const { user } = useAuth();
     const { chats, socket } = useChat();
 
-    function handleNavigate(ChatParams: ChatScreenParams) {
+    function handleNavigate(ChatParams: typeof route.params) {
         socket.emit("chat_action", { chat_id: ChatParams.chat_id, action: 'enter' })
-        navigate('Chat', ChatParams)
+        navigation.navigate('Chat', ChatParams)
     }
 
     return (

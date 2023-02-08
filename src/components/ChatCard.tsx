@@ -6,12 +6,13 @@ import {
 import { RectButton } from "react-native-gesture-handler";
 import { styled } from "nativewind";
 
-import { ChatScreenParams } from "../../routes/index.routes";
 import {
     Chat as IChat
-} from "../../dtos/Chats";
+} from "../dtos/Chats";
 
 const RectButtonTW = styled(RectButton);
+
+type ChatScreenParams = ReactNavigation.AppStackParamList['Chat']
 
 interface IChatProps {
     data: IChat;

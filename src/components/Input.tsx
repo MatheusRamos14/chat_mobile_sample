@@ -1,9 +1,7 @@
 import React from "react";
 import { TextInput, TextInputProps } from "react-native";
 
-interface Props extends TextInputProps {
-
-}
+interface Props extends TextInputProps {}
 
 export function Input({ ...rest }: Props) {
     return (

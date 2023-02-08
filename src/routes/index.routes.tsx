@@ -7,19 +7,7 @@ import { MainRoutes } from "./main.routes";
 import { AuthRoutes } from "./stack.routes";
 import { Chat } from '../screens/Chat';
 
-export type ChatScreenParams = {
-    chat_id: string;
-    friend_id: string;
-    friend_name: string;
-}
-
-export type AppStackParamList = {
-    Auth: undefined;
-    Main: undefined;
-    Chat: ChatScreenParams;
-};
-
-const { Navigator, Screen } = createStackNavigator<AppStackParamList>();
+const { Navigator, Screen } = createStackNavigator<ReactNavigation.AppStackParamList>();
 
 export function AppRoutes() {
     const { isLogged } = useAuth();
@@ -31,10 +19,5 @@ export function AppRoutes() {
                 <Screen name="Chat" component={Chat} />
             </Navigator>
         </ChatProvider >
-    ) : (
-        <Navigator screenOptions={{ headerShown: false }}>
-            <Screen name="Auth" component={AuthRoutes} />
-        </Navigator>
-    )
-
+    ) : ( <AuthRoutes /> )
 }

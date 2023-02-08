@@ -7,19 +7,21 @@ import { styled } from "nativewind";
 
 const BorderlessButtonTW = styled(BorderlessButton);
 
+type ScreenName = keyof ReactNavigation.MainBarParamList;
+
 interface IBottomBarProps {
     config: BottomTabBarProps
 }
 
 export function BottomBar({ config }: IBottomBarProps) {
-    const { descriptors, navigation, state } = config;
+    const { navigation, state } = config;
 
-    const iconConfig = {
+    const iconConfig = {        
         Chats: 'message-square',
         Calls: 'phone',
         Contacts: 'users',
         More: 'more-horizontal'
-    }
+    }    
 
     return (
         <View
@@ -29,7 +31,7 @@ export function BottomBar({ config }: IBottomBarProps) {
             "
         >
             {state.routes.map((route, index) => {
-                const label = route.name;
+                const label = route.name as ScreenName;
                 const isFocused = state.index === index;
 
                 const onPress = () => {
@@ -57,7 +59,7 @@ export function BottomBar({ config }: IBottomBarProps) {
                         key={route.name}
                     >
                         <Feather
-                            name={`${iconConfig[route.name]}`}
+                            name={`${iconConfig[label]}`}
                             color={isFocused ? '#3355FF' : '#1A1A1A'}
                             size={24}
                         />

@@ -85,7 +85,7 @@ const ChatProvider: React.FC<IProviderProps> = ({ children }) => {
     // }
 
     useEffect(() => {
-        const connection = io("https://4888-2804-d4b-8914-7e00-512a-2678-e92e-616e.sa.ngrok.io");
+        const connection = io(process.env.API_URL);
         console.log(connection);
 
         setSocket(connection);

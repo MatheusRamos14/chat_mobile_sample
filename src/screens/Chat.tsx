@@ -1,25 +1,26 @@
 import React, { useCallback, useState } from "react";
-import { Button, FlatList, SectionList, Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import Feather from 'react-native-vector-icons/Feather';
 import { BorderlessButton, TextInput } from "react-native-gesture-handler";
-import { useRoute, useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { styled } from "nativewind";
 import { AxiosError } from "axios";
 
-import { ChatScreenParams } from "../../routes/index.routes";
-import { MessagesDTO, Messages } from "../../dtos/Messages";
-import { useAuth } from "../../hooks/useAuth";
-import { ApiChat } from "../../services/api";
-import { formatChatDate, ISection } from "../../utils/formatChatDate";
-import { Header } from "../../components/Header";
-import { useChat } from "../../hooks/useChat";
+import { MessagesDTO, Messages } from "../dtos/Messages";
+import { useAuth } from "../hooks/useAuth";
+import { ApiChat } from "../services/api";
+import { formatChatDate, ISection } from "../utils/formatChatDate";
+import { Header } from "../components/Header";
+import { useChat } from "../hooks/useChat";
 
 const BorderlessButtonTW = styled(BorderlessButton);
 
-export function Chat() {
+type Props = ReactNavigation.AppStackScreenProps<'Chat'>;
+
+export function Chat({ route }: Props) {
 	const { goBack } = useNavigation();
-	const { params } = useRoute();
-	const { chat_id, friend_id, friend_name } = params as ChatScreenParams;
+	const { params } = route;
+	const { chat_id, friend_name } = params;
 
 	const { user } = useAuth();
 	const { sendMessage, socket } = useChat();

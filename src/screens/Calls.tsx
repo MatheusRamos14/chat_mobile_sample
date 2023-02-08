@@ -7,15 +7,15 @@ import { BorderlessButton } from 'react-native-gesture-handler';
 import { styled } from 'nativewind';
 import Feather from 'react-native-vector-icons/Feather';
 
-import { Header } from '../../components/Header';
+import { Header } from '../components/Header';
 
 const BorderlessButtonTW = styled(BorderlessButton)
 
-export function More() {
+export function Calls() {
     return (
         <View className="flex-1 bg-white items-center justify-center">
             <Header
-                title="More"
+                title="Calls"
                 leftElement={
                     <View className='w-8 h-8 bg-slate-200 rounded-full'>
 
@@ -31,7 +31,7 @@ export function More() {
                     </BorderlessButtonTW>
                 }
             />
-            <Text>More</Text>
+            <Text>Calls</Text>
         </View>
     )
 }

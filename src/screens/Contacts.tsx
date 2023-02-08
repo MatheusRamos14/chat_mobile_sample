@@ -7,7 +7,7 @@ import { BorderlessButton } from 'react-native-gesture-handler';
 import { styled } from 'nativewind';
 import Feather from 'react-native-vector-icons/Feather';
 
-import { Header } from '../../components/Header';
+import { Header } from '../components/Header';
 
 const BorderlessButtonTW = styled(BorderlessButton)
 

@@ -4,7 +4,6 @@ import {
     Text,
     StatusBar
 } from 'react-native';
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 
 interface IHeaderProps {
     title: string;

@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import Entypo from 'react-native-vector-icons/Entypo';
 import { AxiosError } from "axios";
-import { io } from 'socket.io-client';
+import * as Yup from 'yup';
 
-import { useAuth } from "../../hooks/useAuth";
-import { Input } from "../../components/Input";
-import { Button } from "../../components/Button";
+import { useAuth } from "../hooks/useAuth";
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
 
 export function Login() {
     const { login } = useAuth();
@@ -25,16 +25,29 @@ export function Login() {
 
     const handleLogin = async () => {
         try {
+            console.log(process.env.API_URL);
+
+            const schema = Yup.object({
+                email: Yup.string().required("E-mail field is required").email("Please, insert a valid e-mail."),
+                password: Yup.string().required("Password field is required")
+            });            
+
+            await schema.validate({ email, password });
+
             await login({ email, password });
         } catch (error) {
-            const err = error as AxiosError;
-            console.log(err.response?.status)
-            if (err.response?.status === 400)
-                ToastAndroid.show('Invalid mail address or password', 3000)
-            else if (err.response?.status === 404)
-                ToastAndroid.show('User inactivated or not found', 3000)
-            else
-                ToastAndroid.show('Internal server error, try again later', 5000)
+            if (error instanceof Yup.ValidationError) {
+                ToastAndroid.show(error.message, 3000);
+            } else {
+                const err = error as AxiosError;
+                console.log(err.response?.status)
+                if (err.response?.status === 400)
+                    ToastAndroid.show('Invalid mail address or password', 3000)
+                else if (err.response?.status === 404)
+                    ToastAndroid.show('User inactivated or not found', 3000)
+                else
+                    ToastAndroid.show('Internal server error, try again later', 5000)
+            }
         }
     }
 
