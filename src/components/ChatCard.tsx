@@ -32,20 +32,26 @@ export function ChatCard({ data, userId, handleNavigate }: IChatProps) {
             <View className="w-full flex-row px-4 py-3 border-b border-b-slate-200">
                 <View className="w-12 h-12 rounded-full bg-blue-400 mr-2" />
                 <View className="flex-1">
-                    <Text className="text-base font-normal text-[#333333] mb-1">
+                    <Text className="text-base font-semibold text-[#333333] mb-1">
                         {data.connection.users[0].name}
                     </Text>
                     {
                         data.messages.length > 0 &&
-                        <Text className="text-sm font-normal text-[#666666]">
-                            {data.messages[0].author_id === userId && 'You:'}
+                        <Text className={`text-sm font-normal text-[#666666] ${data.unread !== 0 && "font-bold"}`}>
+                            {data.messages[0].author_id === userId && 'You: '}
                             {data.messages[0].content}
                         </Text>
                     }
                 </View>
                 {data.unread !== 0 &&
-                    <View className="w-5 h-5 rounded-full items-center justify-center">
-                        <Text>{data.unread}</Text>
+                    <View className="
+                        w-5 h-5 bg-green-700 rounded-full 
+                        items-center justify-center self-center
+                        "
+                    >
+                        <Text className="text-xs text-white font-bold">
+                            {data.unread}
+                        </Text>
                     </View>
                 }
             </View>

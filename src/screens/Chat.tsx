@@ -12,10 +12,11 @@ import { ApiChat } from "../services/api";
 import { formatChatDate, ISection } from "../utils/formatChatDate";
 import { Header } from "../components/Header";
 import { useChat } from "../hooks/useChat";
+import { MessageScroller } from "../components/MessageScroller";
 
 const BorderlessButtonTW = styled(BorderlessButton);
 
-type Props = ReactNavigation.AppStackScreenProps<'Chat'>;
+type Props = ReactNavigation.AppStackScreenProps<"Chat">
 
 export function Chat({ route }: Props) {
 	const { goBack } = useNavigation();
@@ -72,7 +73,7 @@ export function Chat({ route }: Props) {
 	// }, [messages]))
 
 	useFocusEffect(useCallback(() => {
-		fetchMessages();				
+		fetchMessages();
 
 		socket.on("message_received", _ => {
 			console.log("Recebeu mensagem em tela", user.user.name)
@@ -104,7 +105,7 @@ export function Chat({ route }: Props) {
 		// })
 
 		return () => {
-		    socket.emit("chat_action", { chat_id, action: "leave" })
+			socket.emit("chat_action", { chat_id, action: "leave" })
 		}
 	}, []))
 
@@ -137,48 +138,12 @@ export function Chat({ route }: Props) {
 				}
 			/>
 			<View className="flex-1 px-4">
-				<FlatList
-					className="my-4"
-					inverted
-					data={messages}
-					keyExtractor={(item) => item.title}
-					renderItem={({ item: sectionItem }) => (
-						<View className="w-full">
-							<View className="w-full items-center justify-center mb-4">
-								<View className="bg-[#F2F2F2] items-center justify-center py-1 px-2 rounded-2xl">
-									<Text className="text-xs text-[#333333]">
-										{sectionItem.title}
-									</Text>
-								</View>
-							</View>
-							<FlatList
-								inverted
-								data={sectionItem.data}
-								keyExtractor={(item) => item.sended_at}
-								renderItem={({ item: messageItem }) => (
-									<View className="w-full">
-										<View
-											className={`
-                                                max-w-[80%] py-3 px-4 mb-4 rounded-xl
-                                                ${messageItem.author_id === user.user.id ? 'self-end' : 'self-start'}
-                                                ${messageItem.author_id === user.user.id ? 'bg-[#3355FF]' : 'bg-[#F2F2F2]'}                                                
-                                            `}
-										>
-											<Text
-												className={`
-                                                    text-base font-normal
-                                                    ${messageItem.author_id === user.user.id ? 'text-[#F2F2F2]' : 'text-[#333333]'}
-                                                `}
-											>
-												{messageItem.content}
-											</Text>
-										</View>
-									</View>
-								)}
-							/>
-						</View>
-					)}
+
+				<MessageScroller
+					messages={messages}
+					user_id={user.user.id}
 				/>
+
 				<View className="w-full h-12 flex-row items-center mb-1">
 					<View className="w-8 h-8 rounded-2xl bg-[#3355FF] items-center justify-center">
 						<BorderlessButtonTW

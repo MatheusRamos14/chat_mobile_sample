@@ -69,6 +69,7 @@ export function ChatsList({ navigation }: Props) {
                 <FlatList
                     data={chats}
                     keyExtractor={item => item.id}
+                    showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <ChatCard
                             userId={user.user.id}
